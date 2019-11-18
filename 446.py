@@ -1,4 +1,3 @@
-# %%
 import matplotlib.pyplot as plt
 from scipy.fftpack import fft
 from scipy.io import wavfile # get the api
@@ -25,23 +24,59 @@ def do_fft(data):
     freqLabel = k/T
 
     # print top freqs
-    show_freqs = 5
-    sorted_freqs = np.argsort(abs_freqs)
-    for i in sorted_freqs[-show_freqs:]:
-        print(i, abs_freqs[i])
+
+    # show_freqs = 5
+    # sorted_freqs = np.argsort(abs_freqs)
+    # for i in sorted_freqs[-show_freqs:]:
+    #     print(i, abs_freqs[i])
     return abs_freqs
 
+"""
+    Hole  0: 3.00  cm
+    Hole -2: 12.50 cm
+    Hole -1: 15.25 cm
+    Hole  1: 18.00 cm
+    Hole  2: 20.75 cm
+    Hole  3: 23.50 cm
+    Hole  4: 26.25 cm
+    Hole  5: 29.00 cm
+    Hole  6: 31.75 cm
+    Hole  7: 34.50 cm
+    total: 40.5cm
+"""
+
+note_mappings = {
+    "C5": 523.25,
+    "D5": 587.33,
+    "E5": 659.25,
+    "F5": 698.46,
+    "G5": 783.99,
+    "A5": 880.00,
+    "B5": 987.77,
+}
+
 filenames = [
-    "flute_cover_holes_0",
+    # "flute_cover_holes_0",
     # "flute_cover_holes_0_1",
     # "flute_cover_holes_0_1_2",
     # "flute_cover_holes_2",
+    "3_hole_all_open",
+    "3_hole_cover_hole_3",
+    "3_hole_cover_hole_012",
+    "flute_all_open",
 ]
 
 for filename in filenames:
     fs, data = wavfile.read(filename + ".wav")
     fft_data = do_fft(data)
     plt.plot(fft_data, label=filename)
+
+    
+
+    show_freqs = 1
+    sorted_freqs = np.argsort(fft_data)
+    for i in sorted_freqs[-show_freqs:]:
+        print(filename, i, fft_data[i], sep="\t")
 
 plt.legend()
 plt.xlim(0, max_freq_show)
