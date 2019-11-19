@@ -60,10 +60,29 @@ filenames = [
     # "flute_cover_holes_0_1",
     # "flute_cover_holes_0_1_2",
     # "flute_cover_holes_2",
-    "3_hole_all_open",
-    "3_hole_cover_hole_3",
-    "3_hole_cover_hole_012",
-    "flute_all_open",
+    # "3_hole_all_open",
+    # "3_hole_cover_hole_3",
+    # "3_hole_cover_hole_012",
+    # "flute_all_open",
+    # "final_flute_only_hole_-2",
+    # "final_flute_only_hole_-1",
+    # "final_flute_only_hole_2",
+    # "final_flute_only_hole_3",
+    # "final_flute_only_hole_4",
+    # "final_flute_only_hole_5",
+    # "final_flute_only_hole_6",
+    # "final_flute_only_hole_7",
+
+    # "trumpet_holes_after_3",
+    # "trumpet_holes_after_4",
+    "trumpet_-1",
+    "trumpet_2",
+    "trumpet_3",
+    "trumpet_4",
+    "trumpet_5",
+    "trumpet_6",
+    "trumpet_7",
+    "trumpet_all_closed",
 ]
 
 for filename in filenames:
@@ -71,16 +90,17 @@ for filename in filenames:
     fft_data = do_fft(data)
     plt.plot(fft_data, label=filename)
 
-    
+    # show_freqs = 1
+    # sorted_freqs = np.argsort(fft_data)
+    # for i in sorted_freqs[-show_freqs:]:
+    #     print(filename, i, fft_data[i], sep="\t")
 
-    show_freqs = 1
-    sorted_freqs = np.argsort(fft_data)
-    for i in sorted_freqs[-show_freqs:]:
-        print(filename, i, fft_data[i], sep="\t")
+    # f, pxx_den = signal.periodogram(data, fs)
+    # plt.semilogy(f, pxx_den)
 
 plt.legend()
 plt.xlim(0, max_freq_show)
-plt.ylim(0, 5E7)
+# plt.ylim(0, 5E7)
 plt.show()
 
 # plt.subplot(2, 2, 1)
