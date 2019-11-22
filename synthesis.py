@@ -67,32 +67,60 @@ for note in set(notes):
     fs, note_data = wavfile.read(note_file_mapping[note] + ".wav")
     print(f"Note: {note} \tfs: {fs}\tlen: {len(note_data)}\tdur: {len(note_data)/fs}")
 
-    norm_note_data = normalize(note_data, t_norm=0.5)
+    norm_note_data = normalize(note_data, t_norm=1)
     normalized_notes[note] = norm_note_data
     # wavfile.write("generated/" + note + ".wav", fs, norm_note_data)
 
-song = np.array([])
-space = np.zeros(int(0.1 * 44100))
-for note in notes:
+sampling_rate = 44100
+for note in set(notes):
     cur_note = normalized_notes[note]
-
-    song = np.concatenate((song, cur_note, space), axis=0)
-song = song.astype(np.int16)
-wavfile.write("generated/titanic.wav", 44100, song)
 
 #%%
 import mido
 
+core_note_mapping = {
+        2:"D",
+        3:"D#",
+        4:"E",
+        5:"F",
+        6:"F#",
+        7:"G",
+        8:"G#",
+        11:"B",
+}
+
 mid = mido.MidiFile("heart_will_go_on_filtered.mid")
-i = 0
+song = np.array([0])
+current_time = 0
 for msg in mid.play():
     if msg.type is not "note_on" and msg.type is not "note_off":
         continue
     if msg.channel != 0:
         continue
     print(msg)
-    i += 1
-    if i > 100:
-        break
 
-# %%
+    note_dur_samples = int(msg.time * sampling_rate)
+    # extend the song length if needed
+    delta = current_time + note_dur_samples
+    if delta >= len(song):
+        zeros = np.zeros(delta)
+        song = np.concatenate((song, zeros))
+
+
+    # msg.time = duration of that note
+    if msg.type is "note_on":
+        core_note_id = msg.note % 12
+        norm_note = normalized_notes[core_note_mapping[core_note_id]]
+        note = normalize(norm_note, t_norm=msg.time)
+        
+        for n in range(note_dur_samples):
+            song[current_time + n] += note[n]
+
+    elif msg.type is "note_off":
+        pass
+    
+    current_time += int(msg.time * sampling_rate)
+
+song = song.astype(np.int16)
+wavfile.write("generated/titanic.wav", sampling_rate, song)
+
