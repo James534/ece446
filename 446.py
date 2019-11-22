@@ -3,6 +3,7 @@ from scipy.fftpack import fft
 from scipy.io import wavfile # get the api
 import numpy as np
 from scipy import signal
+from scipy import optimize
 
 # %%
 
@@ -46,13 +47,43 @@ def do_fft(data):
 """
 
 note_mappings = {
+    "G3": 196.00,
+    "A3": 220.00,
+    "B3": 246.94,
+    "C4": 261.63,
+    "C4#": 277.18,
+    "D4": 293.66,
+    "D4#": 311.13,
+    "E4": 329.63,
+    "F4": 349.23,
+    "F4#": 369.99,
+    "G4": 392.00,
+    "G4#": 415.30,
+    "A4": 440.00,
+    "A4#": 466.16,
+    "B4": 493.88,
     "C5": 523.25,
-    "D5": 587.33,
-    "E5": 659.25,
-    "F5": 698.46,
-    "G5": 783.99,
-    "A5": 880.00,
-    "B5": 987.77,
+   #  "D5": 587.33,
+   #  "E5": 659.25,
+   #  "F5": 698.46,
+   #  "G5": 783.99,
+   #  "A5": 880.00,
+   #  "B5": 987.77,
+}
+
+# Titanic notes
+# E  D#  F#  G#  F#  B
+# E4 D4# F4# G4# B4/B3
+
+filename_hole_loc_mapping = {
+        "trumpet_-1": 15.25,
+        "trumpet_2": 20.75,
+        "trumpet_3": 23.5,
+        "trumpet_4": 26.25,
+        "trumpet_5": 29.0,
+        "trumpet_6": 31.75,
+        "trumpet_7": 34.5,
+        "trumpet_all_closed": 40.5,
 }
 
 filenames = [
@@ -85,21 +116,58 @@ filenames = [
     "trumpet_all_closed",
 ]
 
-for filename in filenames:
+def fit_func(x, a, b):
+    return x * a + b
+
+dists = []
+freqs = []
+#for filename in filenames:
+for filename, dist in filename_hole_loc_mapping.items():
     fs, data = wavfile.read(filename + ".wav")
     fft_data = do_fft(data)
-    plt.plot(fft_data, label=filename)
+    #plt.plot(fft_data, label=filename)
 
-    # show_freqs = 1
-    # sorted_freqs = np.argsort(fft_data)
-    # for i in sorted_freqs[-show_freqs:]:
-    #     print(filename, i, fft_data[i], sep="\t")
+    show_freqs = 1
+    sorted_freqs = np.argsort(fft_data)
+    for i in sorted_freqs[-show_freqs:]:
+        # print(filename, i, fft_data[i], sep="\t")
+        dists.append(dist)
+        freqs.append(i)
+        plt.scatter(dist, i, label=filename)
+        closest_note = ""
+        closest_diff = 10000
+        for note, freq in note_mappings.items():
+            diff = abs(freq - i)
+            if diff < closest_diff:
+                closest_diff = diff
+                closest_note = note
+        print(f"Closest note to {filename} is {closest_note} with an abs diff of {closest_diff}")
 
     # f, pxx_den = signal.periodogram(data, fs)
     # plt.semilogy(f, pxx_den)
+params, conv = optimize.curve_fit(fit_func, dists, freqs)
+print(params)
+
+fitted_y = []
+for d in dists:
+    fitted_y.append(fit_func(d, params[0], params[1]))
+plt.plot(dists, fitted_y, label="fitted")
+
+
+for note, freq in note_mappings.items():
+    plt.hlines(y=freq, xmin=min(dists),  xmax=max(dists), label=note, color=np.random.rand(3,))
+
+    # y = mx + b
+    # x = (y-b)/m
+    dist = (freq - params[1]) / params[0]
+    
+    if note in "E4 D4# F4# G4# B3":
+        print(f"Note {note} is a hole at {dist} cm")
+    # plt.scatter(10, freq, label=note)
+
 
 plt.legend()
-plt.xlim(0, max_freq_show)
+#plt.xlim(0, max_freq_show)
 # plt.ylim(0, 5E7)
 plt.show()
 
