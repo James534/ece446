@@ -100,25 +100,18 @@ for msg in mid.play():
     print(msg)
 
     note_dur_samples = int(msg.time * sampling_rate)
-    # extend the song length if needed
-    delta = current_time + note_dur_samples
-    if delta >= len(song):
-        zeros = np.zeros(delta)
-        song = np.concatenate((song, zeros))
-
 
     # msg.time = duration of that note
     if msg.type is "note_on":
         core_note_id = msg.note % 12
         norm_note = normalized_notes[core_note_mapping[core_note_id]]
         note = normalize(norm_note, t_norm=msg.time)
-        
-        for n in range(note_dur_samples):
-            song[current_time + n] += note[n]
 
+        song = np.concatenate((song, note))
     elif msg.type is "note_off":
-        pass
-    
+        zeros = np.zeros(note_dur_samples)
+        song = np.concatenate((song, zeros))
+
     current_time += int(msg.time * sampling_rate)
 
 song = song.astype(np.int16)
