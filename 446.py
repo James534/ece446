@@ -76,14 +76,25 @@ note_mappings = {
 # E4 D4# F4# G4# B4/B3
 
 filename_hole_loc_mapping = {
-        "trumpet_-1": 15.25,
-        "trumpet_2": 20.75,
-        "trumpet_3": 23.5,
-        "trumpet_4": 26.25,
-        "trumpet_5": 29.0,
-        "trumpet_6": 31.75,
-        "trumpet_7": 34.5,
-        "trumpet_all_closed": 40.5,
+    # "trumpet_-1": 15.25,
+    # "trumpet_2": 20.75,
+    # "trumpet_3": 23.5,
+    # "trumpet_4": 26.25,
+    # "trumpet_5": 29.0,
+    # "trumpet_6": 31.75,
+    # "trumpet_7": 34.5,
+    # "trumpet_all_closed": 40.5,
+
+    "V2/Hole_1_G4#": 20.82,
+    "V2/Hole_2_G4" : 23.00,
+    "V2/Hole_3_F4#": 25.06,
+    "V2/Hole_4_F4" : 27.01,
+    # "V2/Hole_5_E4" : 28.85,
+    "V2/Hole_5_E4_v2" : 28.85,
+    "V2/Hole_6_D4#": 30.58,
+    "V2/Hole_7_D4" : 32.22,
+    # "V2/Hole_8_B3" : 36.60,
+    "V2/Hole_8_B3_v2" : 36.60,
 }
 
 filenames = [
