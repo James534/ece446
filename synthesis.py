@@ -27,6 +27,17 @@ note_file_mapping = {
     "B":    "V2/Hole_8_B3_v2",
 }
 
+note_midi_mapping = {
+    "G#":   68,   # G4#
+    "G":    67,   # G4
+    "F#":   66,   # F4#
+    "F":    65,   # F4
+    "E":    64,   # E4
+    "D#":   63,   # D4#
+    "D":    62,   # D4
+    "B":    59,   # B3
+}
+
 def normalize(note_data, t_norm=1, rms_norm=10000):
     # 1 second = fs samples
     # normalize all notes to the same time
@@ -68,3 +79,20 @@ for note in notes:
     song = np.concatenate((song, cur_note, space), axis=0)
 song = song.astype(np.int16)
 wavfile.write("generated/titanic.wav", 44100, song)
+
+#%%
+import mido
+
+mid = mido.MidiFile("heart_will_go_on_filtered.mid")
+i = 0
+for msg in mid.play():
+    if msg.type is not "note_on" and msg.type is not "note_off":
+        continue
+    if msg.channel != 0:
+        continue
+    print(msg)
+    i += 1
+    if i > 100:
+        break
+
+# %%
