@@ -76,55 +76,65 @@ note_mappings = {
 # E4 D4# F4# G4# B4/B3
 
 filename_hole_loc_mapping = {
-    # "trumpet_-1": 15.25,
-    # "trumpet_2": 20.75,
-    # "trumpet_3": 23.5,
-    # "trumpet_4": 26.25,
-    # "trumpet_5": 29.0,
-    # "trumpet_6": 31.75,
-    # "trumpet_7": 34.5,
-    # "trumpet_all_closed": 40.5,
+    "V1": {
+        "trumpet_-1": 15.25,
+        "trumpet_2": 20.75,
+        "trumpet_3": 23.5,
+        "trumpet_4": 26.25,
+        "trumpet_5": 29.0,
+        "trumpet_6": 31.75,
+        "trumpet_7": 34.5,
+        "trumpet_all_closed": 40.5,
+    },
 
-    # "V2/Hole_1_G4#": 20.82,
-    # "V2/Hole_2_G4" : 23.00,
-    # "V2/Hole_3_F4#": 25.06,
-    # "V2/Hole_4_F4" : 27.01,
-    # # "V2/Hole_5_E4" : 28.85,
-    # "V2/Hole_5_E4_v2" : 28.85,
-    # "V2/Hole_6_D4#": 30.58,
-    # "V2/Hole_7_D4" : 32.22,
-    # # "V2/Hole_8_B3" : 36.60,
-    # "V2/Hole_8_B3_v2" : 36.60,
+    "V2": {
+        "V2/Hole_1_G4#": 20.82,
+        "V2/Hole_2_G4" : 23.00,
+        "V2/Hole_3_F4#": 25.06,
+        "V2/Hole_4_F4" : 27.01,
+        # "V2/Hole_5_E4" : 28.85,
+        "V2/Hole_5_E4_v2" : 28.85,
+        "V2/Hole_6_D4#": 30.58,
+        "V2/Hole_7_D4" : 32.22,
+        # "V2/Hole_8_B3" : 36.60,
+        "V2/Hole_8_B3_v2" : 36.60,
+    },
 
-    # "V3/open":      16.2,
-    # "V3/hole_1":    18.6,
-    # "V3/hole_2":    20.9,
-    # "V3/hole_3":    23.0,
-    # "V3/hole_4":    25.0,
-    # "V3/hole_5":    26.9,
-    # "V3/hole_6":    28.7,
-    # "V3/hole_7":    33.5,
-    # "V3/hole_8":    40.5,
+    "V3": {
+        "V3/open":      16.2,
+        "V3/hole_1":    18.6,
+        "V3/hole_2":    20.9,
+        "V3/hole_3":    23.0,
+        "V3/hole_4":    25.0,
+        "V3/hole_5":    26.9,
+        "V3/hole_6":    28.7,
+        "V3/hole_7":    33.5,
+        "V3/hole_8":    40.5,
+    },
 
-    # "V4/open":      16.2,
-    # "V4/hole_1":    18.6,
-    # "V4/hole_2":    20.9,
-    # "V4/hole_3":    23.0,
-    # "V4/hole_4":    25.0,
-    # "V4/hole_5":    26.9,
-    # "V4/hole_6":    28.7,
-    # "V4/hole_7":    33.5,
-    # "V4/hole_8":    39.5,
+    "V4": {
+        "V4/open":      16.2,
+        "V4/hole_1":    18.6,
+        "V4/hole_2":    20.9,
+        "V4/hole_3":    23.0,
+        "V4/hole_4":    25.0,
+        "V4/hole_5":    26.9,
+        "V4/hole_6":    28.7,
+        "V4/hole_7":    33.5,
+        "V4/hole_8":    39.5,
+    },
 
-    "V5/open":      16.2,
-    "V5/hole_1":    18.6,
-    "V5/hole_2":    20.9,
-    "V5/hole_3":    23.0,
-    "V5/hole_4":    25.0,
-    "V5/hole_5":    26.9,
-    "V5/hole_6":    28.7,
-    "V5/hole_7":    33.5,
-    "V5/hole_8":    40.8,
+    "V5": {
+        "V5/open":      16.2,
+        "V5/hole_1":    18.6,
+        "V5/hole_2":    20.9,
+        "V5/hole_3":    23.0,
+        "V5/hole_4":    25.0,
+        "V5/hole_5":    26.9,
+        "V5/hole_6":    28.7,
+        "V5/hole_7":    33.5,
+        "V5/hole_8":    40.8,
+    }
 }
 
 filenames = [
@@ -160,54 +170,63 @@ filenames = [
 def fit_func(x, a, b):
     return x * a + b
 
-dists = []
-freqs = []
-#for filename in filenames:
-for filename, dist in filename_hole_loc_mapping.items():
-    fs, data = wavfile.read(filename + ".wav")
-    fft_data = do_fft(data)
-    #plt.plot(fft_data, label=filename)
+for version, mapping in filename_hole_loc_mapping.items():
+    dists = []
+    freqs = []
+    for filename, dist in mapping.items():
+        fs, data = wavfile.read(filename + ".wav")
+        fft_data = do_fft(data)
+        #plt.plot(fft_data, label=filename)
 
-    show_freqs = 1
-    sorted_freqs = np.argsort(fft_data)
-    for i in sorted_freqs[-show_freqs:]:
-        # print(filename, i, fft_data[i], sep="\t")
-        dists.append(dist)
-        freqs.append(i)
-        plt.scatter(dist, i, label=filename)
-        closest_note = ""
-        closest_diff = 10000
-        for note, freq in note_mappings.items():
-            diff = abs(freq - i)
-            if diff < closest_diff:
-                closest_diff = diff
-                closest_note = note
-        print(f"Closest note to {filename} is {closest_note} with an abs diff of {closest_diff}")
+        show_freqs = 1
+        sorted_freqs = np.argsort(fft_data)
+        for i in sorted_freqs[-show_freqs:]:
+            # print(filename, i, fft_data[i], sep="\t")
+            dists.append(dist)
+            freqs.append(i)
+            plt.scatter(dist, i, label=filename)
+            closest_note = ""
+            closest_diff = 10000
+            for note, freq in note_mappings.items():
+                diff = abs(freq - i)
+                if diff < closest_diff:
+                    closest_diff = diff
+                    closest_note = note
+            print(f"Closest note to {filename} is {closest_note} with an abs diff of {closest_diff}")
 
-    # f, pxx_den = signal.periodogram(data, fs)
-    # plt.semilogy(f, pxx_den)
-params, conv = optimize.curve_fit(fit_func, dists, freqs)
-print(params)
+        # f, pxx_den = signal.periodogram(data, fs)
+        # plt.semilogy(f, pxx_den)
+    # plt.scatter(dists, freqs, label=version)
+    params, conv = optimize.curve_fit(fit_func, dists, freqs)
+    print(params)
 
-fitted_y = []
-for d in dists:
-    fitted_y.append(fit_func(d, params[0], params[1]))
-plt.plot(dists, fitted_y, label="fitted")
+    fitted_y = []
+    for d in dists:
+        fitted_y.append(fit_func(d, params[0], params[1]))
+    plt.plot(dists, fitted_y, label=f"Fitted")
+
+    plt.xlabel('Distance of hole from opening [cm]')
+    plt.ylabel('Frequency [Hz]')
+    plt.title(f"Distance of hole vs Frequency {version}")
+    plt.figure()
 
 
-for note, freq in note_mappings.items():
-    plt.hlines(y=freq, xmin=min(dists),  xmax=max(dists), label=note, color=np.random.rand(3,))
+# for note, freq in note_mappings.items():
+#     plt.hlines(y=freq, xmin=min(dists),  xmax=max(dists), label=note, color=np.random.rand(3,))
 
-    # y = mx + b
-    # x = (y-b)/m
-    dist = (freq - params[1]) / params[0]
+#     # y = mx + b
+#     # x = (y-b)/m
+#     dist = (freq - params[1]) / params[0]
     
-    if note in "E4 D4# F4# G4# B3":
-        print(f"Note {note} is a hole at {dist} cm")
-    # plt.scatter(10, freq, label=note)
+#     if note in "E4 D4# F4# G4# B3":
+#         print(f"Note {note} is a hole at {dist} cm")
+#     # plt.scatter(10, freq, label=note)
 
 
 plt.legend()
+plt.xlabel('Distance of hole from opening [cm]')
+plt.ylabel('Frequency [Hz]')
+plt.title("Distance of hole vs Frequency")
 #plt.xlim(0, max_freq_show)
 # plt.ylim(0, 5E7)
 plt.show()
