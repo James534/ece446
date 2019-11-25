@@ -58,11 +58,11 @@ note_mappings = {
     "F4": 349.23,
     "F4#": 369.99,
     "G4": 392.00,
-    # "G4#": 415.30,
-    # "A4": 440.00,
-    # "A4#": 466.16,
-    # "B4": 493.88,
-    # "C5": 523.25,
+    "G4#": 415.30,
+    "A4": 440.00,
+    "A4#": 466.16,
+    "B4": 493.88,
+    "C5": 523.25,
 
    #  "D5": 587.33,
    #  "E5": 659.25,
@@ -190,20 +190,20 @@ filenames = [
 ]
 
 plt.figure(figsize=(15,10))
-# Plot Frequency spectrum for wav files
-for filename in filenames:
-    fs, data = wavfile.read(filename + ".wav")
-    fft_data = do_fft(data)
-    plt.plot(fft_data, label=filename)
+# # Plot Frequency spectrum for wav files
+# for filename in filenames:
+#     fs, data = wavfile.read(filename + ".wav")
+#     fft_data = do_fft(data)
+#     plt.plot(fft_data, label=filename)
 
-plt.legend()
-plt.xlabel('Frequency [Hz]')
-plt.ylabel('Fourier values')
-plt.title("Frequency spectrum of Trumpet notes")
-plt.xlim(0, max_freq_show)
-# plt.ylim(0, 5E7)
-plt.show()
-exit()
+# plt.legend()
+# plt.xlabel('Frequency [Hz]')
+# plt.ylabel('Fourier values')
+# plt.title("Frequency spectrum of Trumpet notes")
+# plt.xlim(0, max_freq_show)
+# # plt.ylim(0, 5E7)
+# plt.show()
+# exit()
 
 def fit_func(x, a, b):
     return x * a + b
@@ -223,6 +223,7 @@ for version, mapping in filename_hole_loc_mapping.items():
             dists.append(dist)
             freqs.append(i)
             # plt.scatter(dist, i, label=filename)
+            plt.annotate(filename, (dist, i))
             # plt.scatter(dist, i)
             # plt.annotate(filename_note_mapping[filename.split('/')[1]], (dist, i))
             closest_note = ""
@@ -250,21 +251,21 @@ for version, mapping in filename_hole_loc_mapping.items():
     # plt.title(f"Distance of hole vs Frequency {version}")
     # plt.figure(figsize=(15,10))
 
-# i = 0
-# for note, freq in note_mappings.items():
-#     # plt.hlines(y=freq, xmin=min(dists),  xmax=max(dists), label=note, color=np.random.rand(3,))
-#     color = colorsys.hsv_to_rgb( i / (len(note_mappings)*2), 1.0, 1.0 )
-#     plt.hlines(y=freq, xmin=min(dists),  xmax=max(dists), color=color)
-#     plt.annotate(note, (min(dists)-1, freq))
+i = 0
+for note, freq in note_mappings.items():
+    # plt.hlines(y=freq, xmin=min(dists),  xmax=max(dists), label=note, color=np.random.rand(3,))
+    color = colorsys.hsv_to_rgb( i / (len(note_mappings)*2), 1.0, 1.0 )
+    plt.hlines(y=freq, xmin=min(dists),  xmax=max(dists), color=color)
+    plt.annotate(note, (min(dists)-1, freq))
 
-#     # y = mx + b
-#     # x = (y-b)/m
-#     dist = (freq - params[1]) / params[0]
+    # y = mx + b
+    # x = (y-b)/m
+    dist = (freq - params[1]) / params[0]
 
-#     if note in "E4 D4# F4# G4# B3":
-#         print(f"Note {note} is a hole at {dist} cm")
-#     # plt.scatter(10, freq, label=note)
-#     i += 1
+    if note in "E4 D4# F4# G4# B3":
+        print(f"Note {note} is a hole at {dist} cm")
+    # plt.scatter(10, freq, label=note)
+    i += 1
 
 
 plt.legend()

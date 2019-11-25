@@ -17,14 +17,14 @@ notes = [
 
 
 note_file_mapping = {
-    "G#":   "V2/Hole_1_G4#",
-    "G":    "V2/Hole_2_G4",
-    "F#":   "V2/Hole_3_F4#",
-    "F":    "V2/Hole_4_F4",
-    "E":    "V2/Hole_5_E4_v2",
-    "D#":   "V2/Hole_6_D4#",
-    "D":    "V2/Hole_7_D4",
-    "B":    "V2/Hole_8_B3_v2",
+    "G#":   "V4/Hole_1",
+    "G":    "V3/Hole_2",
+    "F#":   "V4/Hole_2",
+    "F":    "V4/Hole_3",
+    "E":    "V5/Hole_3",
+    "D#":   "V4/Hole_4",
+    "D":    "V4/Hole_5",
+    "B":    "V4/Hole_7",
 }
 
 note_midi_mapping = {
