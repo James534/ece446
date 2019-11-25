@@ -79,40 +79,46 @@ for note in set(notes):
 import mido
 
 core_note_mapping = {
-        2:"D",
-        3:"D#",
-        4:"E",
-        5:"F",
-        6:"F#",
-        7:"G",
-        8:"G#",
-        11:"B",
+    2:"D",
+    3:"D#",
+    4:"E",
+    5:"F",
+    6:"F#",
+    7:"G",
+    8:"G#",
+    11:"B",
 }
 
 mid = mido.MidiFile("heart_will_go_on_filtered.mid")
 song = np.array([0])
 current_time = 0
+last_msg = None
 for msg in mid.play():
     if msg.type is not "note_on" and msg.type is not "note_off":
         continue
     if msg.channel != 0:
         continue
-    print(msg)
+    if msg.type is "note_off":
+        print("\t", msg)
+    else:
+        print(msg)
 
-    note_dur_samples = int(msg.time * sampling_rate)
+    if last_msg is not None:
+        note_dur_samples = int(msg.time * sampling_rate)
+        # msg.time = duration of that note
+        if last_msg.type is "note_on":
+            core_note_id = last_msg.note % 12
+            norm_note = normalized_notes[core_note_mapping[core_note_id]]
+            note = normalize(norm_note, t_norm=msg.time)
 
-    # msg.time = duration of that note
-    if msg.type is "note_on":
-        core_note_id = msg.note % 12
-        norm_note = normalized_notes[core_note_mapping[core_note_id]]
-        note = normalize(norm_note, t_norm=msg.time)
+            song = np.concatenate((song, note))
+        elif last_msg.type is "note_off":
+            zeros = np.zeros(note_dur_samples)
+            song = np.concatenate((song, zeros))
 
-        song = np.concatenate((song, note))
-    elif msg.type is "note_off":
-        zeros = np.zeros(note_dur_samples)
-        song = np.concatenate((song, zeros))
+        current_time += int(msg.time * sampling_rate)
 
-    current_time += int(msg.time * sampling_rate)
+    last_msg = msg
 
 song = song.astype(np.int16)
 wavfile.write("generated/titanic.wav", sampling_rate, song)
