@@ -25,17 +25,11 @@ note_file_mapping = {
     "D#":   "V4/Hole_4",
     "D":    "V4/Hole_5",
     "B":    "V4/Hole_7",
-}
 
-note_midi_mapping = {
-    "G#":   68,   # G4#
-    "G":    67,   # G4
-    "F#":   66,   # F4#
-    "F":    65,   # F4
-    "E":    64,   # E4
-    "D#":   63,   # D4#
-    "D":    62,   # D4
-    "B":    59,   # B3
+    "C":    "V5/Hole_7",
+    "C#":   "V4/Hole_6",
+    "A":    "V2/Hole_8_B3_v2",
+    "A#":   "V3/Hole_8",
 }
 
 def normalize(note_data, t_norm=1, rms_norm=10000):
@@ -63,7 +57,7 @@ def normalize(note_data, t_norm=1, rms_norm=10000):
 
 # normalize all notes
 normalized_notes = {}
-for note in set(notes):
+for note in set(note_file_mapping.keys()):
     fs, note_data = wavfile.read(note_file_mapping[note] + ".wav")
     print(f"Note: {note} \tfs: {fs}\tlen: {len(note_data)}\tdur: {len(note_data)/fs}")
 
@@ -87,9 +81,16 @@ core_note_mapping = {
     7:"G",
     8:"G#",
     11:"B",
+
+    0: "C",
+    1: "C#",
+    9: "A",
+    10: "A#",
 }
 
-mid = mido.MidiFile("heart_will_go_on_filtered.mid")
+midi_name = "imperial"
+
+mid = mido.MidiFile(f"midi/{midi_name}.mid")
 song = np.array([0])
 current_time = 0
 last_msg = None
@@ -121,5 +122,5 @@ for msg in mid.play():
     last_msg = msg
 
 song = song.astype(np.int16)
-wavfile.write("generated/titanic.wav", sampling_rate, song)
+wavfile.write(f"generated/{midi_name}.wav", sampling_rate, song)
 

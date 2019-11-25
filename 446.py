@@ -48,7 +48,9 @@ def do_fft(data):
 
 note_mappings = {
     "G3": 196.00,
+    "G3#": 207.65,
     "A3": 220.00,
+    "A3#": 233.08,
     "B3": 246.94,
     "C4": 261.63,
     "C4#": 277.18,
@@ -58,11 +60,11 @@ note_mappings = {
     "F4": 349.23,
     "F4#": 369.99,
     "G4": 392.00,
-    "G4#": 415.30,
-    "A4": 440.00,
-    "A4#": 466.16,
-    "B4": 493.88,
-    "C5": 523.25,
+    # "G4#": 415.30,
+    # "A4": 440.00,
+    # "A4#": 466.16,
+    # "B4": 493.88,
+    # "C5": 523.25,
 
    #  "D5": 587.33,
    #  "E5": 659.25,
@@ -98,16 +100,16 @@ filename_note_mapping = {
 }
 
 filename_hole_loc_mapping = {
-    "V1": {
-        "trumpet_-1": 15.25,
-        "trumpet_2": 20.75,
-        "trumpet_3": 23.5,
-        "trumpet_4": 26.25,
-        "trumpet_5": 29.0,
-        "trumpet_6": 31.75,
-        "trumpet_7": 34.5,
-        "trumpet_all_closed": 40.5,
-    },
+    # "V1": {
+    #     "trumpet_-1": 15.25,
+    #     "trumpet_2": 20.75,
+    #     "trumpet_3": 23.5,
+    #     "trumpet_4": 26.25,
+    #     "trumpet_5": 29.0,
+    #     "trumpet_6": 31.75,
+    #     "trumpet_7": 34.5,
+    #     "trumpet_all_closed": 40.5,
+    # },
 
     "V2": {
         "V2/Hole_1_G4#": 20.82,
@@ -122,41 +124,41 @@ filename_hole_loc_mapping = {
         "V2/Hole_8_B3_v2" : 36.60,
     },
 
-    "V3": {
-        "V3/open":      16.2,
-        "V3/hole_1":    18.6,
-        "V3/hole_2":    20.9,
-        "V3/hole_3":    23.0,
-        "V3/hole_4":    25.0,
-        "V3/hole_5":    26.9,
-        "V3/hole_6":    28.7,
-        "V3/hole_7":    33.5,
-        "V3/hole_8":    40.5,
-    },
+    # "V3": {
+    #     "V3/open":      16.2,
+    #     "V3/hole_1":    18.6,
+    #     "V3/hole_2":    20.9,
+    #     "V3/hole_3":    23.0,
+    #     "V3/hole_4":    25.0,
+    #     "V3/hole_5":    26.9,
+    #     "V3/hole_6":    28.7,
+    #     "V3/hole_7":    33.5,
+    #     "V3/hole_8":    40.5,
+    # },
 
-    "V4": {
-        "V4/open":      16.2,
-        "V4/hole_1":    18.6,
-        "V4/hole_2":    20.9,
-        "V4/hole_3":    23.0,
-        "V4/hole_4":    25.0,
-        "V4/hole_5":    26.9,
-        "V4/hole_6":    28.7,
-        "V4/hole_7":    33.5,
-        "V4/hole_8":    39.5,
-    },
+    # "V4": {
+    #     "V4/open":      16.2,
+    #     "V4/hole_1":    18.6,
+    #     "V4/hole_2":    20.9,
+    #     "V4/hole_3":    23.0,
+    #     "V4/hole_4":    25.0,
+    #     "V4/hole_5":    26.9,
+    #     "V4/hole_6":    28.7,
+    #     "V4/hole_7":    33.5,
+    #     "V4/hole_8":    39.5,
+    # },
 
-    "V5": {
-        "V5/open":      16.2,
-        "V5/hole_1":    18.6,
-        "V5/hole_2":    20.9,
-        "V5/hole_3":    23.0,
-        "V5/hole_4":    25.0,
-        "V5/hole_5":    26.9,
-        "V5/hole_6":    28.7,
-        "V5/hole_7":    33.5,
-        "V5/hole_8":    40.8,
-    }
+    # "V5": {
+    #     "V5/open":      16.2,
+    #     "V5/hole_1":    18.6,
+    #     "V5/hole_2":    20.9,
+    #     "V5/hole_3":    23.0,
+    #     "V5/hole_4":    25.0,
+    #     "V5/hole_5":    26.9,
+    #     "V5/hole_6":    28.7,
+    #     "V5/hole_7":    33.5,
+    #     "V5/hole_8":    40.8,
+    # }
 }
 
 filenames = [
@@ -223,9 +225,9 @@ for version, mapping in filename_hole_loc_mapping.items():
             dists.append(dist)
             freqs.append(i)
             # plt.scatter(dist, i, label=filename)
-            plt.annotate(filename, (dist, i))
+            # plt.annotate(filename, (dist, i))
             # plt.scatter(dist, i)
-            # plt.annotate(filename_note_mapping[filename.split('/')[1]], (dist, i))
+            plt.annotate(filename_note_mapping[filename.split('/')[1]], (dist, i))
             closest_note = ""
             closest_diff = 10000
             for note, freq in note_mappings.items():
@@ -268,10 +270,10 @@ for note, freq in note_mappings.items():
     i += 1
 
 
-plt.legend()
+# plt.legend()
 plt.xlabel('Distance of hole from opening [cm]')
 plt.ylabel('Frequency [Hz]')
-plt.title("Distance of hole vs Frequency")
+plt.title("Distance of hole vs Frequency V2")
 plt.xlim(min(dists)-1.5, max(dists)+1)
 # plt.xlim(0, max_freq_show)
 # plt.ylim(0, 5E7)
