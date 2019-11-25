@@ -4,6 +4,7 @@ from scipy.io import wavfile # get the api
 import numpy as np
 from scipy import signal
 from scipy import optimize
+import colorsys
 
 # %%
 
@@ -12,8 +13,7 @@ from scipy import optimize
 # print("fs", fs, "data len", len(data))
 # print("max", max(data), "min", min(data))
 
-max_freq_show = 2000
-#%% FFT
+max_freq_show = 1000
 def do_fft(data):
     # calculate fourier transform (complex numbers list)
     freq_data = fft(data, fs)
@@ -58,11 +58,12 @@ note_mappings = {
     "F4": 349.23,
     "F4#": 369.99,
     "G4": 392.00,
-    "G4#": 415.30,
-    "A4": 440.00,
-    "A4#": 466.16,
-    "B4": 493.88,
-    "C5": 523.25,
+    # "G4#": 415.30,
+    # "A4": 440.00,
+    # "A4#": 466.16,
+    # "B4": 493.88,
+    # "C5": 523.25,
+
    #  "D5": 587.33,
    #  "E5": 659.25,
    #  "F5": 698.46,
@@ -74,6 +75,27 @@ note_mappings = {
 # Titanic notes
 # E  D#  F#  G#  F#  B
 # E4 D4# F4# G4# B4/B3
+
+filename_note_mapping = {
+    "open":      "G4#",
+    "hole_1":    "G4",
+    "hole_2":    "F4#",
+    "hole_3":    "F4",
+    "hole_4":    "E4",
+    "hole_5":    "D4#",
+    "hole_6":    "D4",
+    "hole_7":    "B3",
+    "hole_8":    "",
+
+    "Hole_1_G4#": "G4#",
+    "Hole_2_G4" : "G4",
+    "Hole_3_F4#": "F4#",
+    "Hole_4_F4" : "F4",
+    "Hole_5_E4_v2" : "E4",
+    "Hole_6_D4#": "D4#",
+    "Hole_7_D4" : "D4",
+    "Hole_8_B3_v2" : "B3",
+}
 
 filename_hole_loc_mapping = {
     "V1": {
@@ -167,6 +189,22 @@ filenames = [
     "trumpet_all_closed",
 ]
 
+plt.figure(figsize=(15,10))
+# Plot Frequency spectrum for wav files
+for filename in filenames:
+    fs, data = wavfile.read(filename + ".wav")
+    fft_data = do_fft(data)
+    plt.plot(fft_data, label=filename)
+
+plt.legend()
+plt.xlabel('Frequency [Hz]')
+plt.ylabel('Fourier values')
+plt.title("Frequency spectrum of Trumpet notes")
+plt.xlim(0, max_freq_show)
+# plt.ylim(0, 5E7)
+plt.show()
+exit()
+
 def fit_func(x, a, b):
     return x * a + b
 
@@ -184,7 +222,9 @@ for version, mapping in filename_hole_loc_mapping.items():
             # print(filename, i, fft_data[i], sep="\t")
             dists.append(dist)
             freqs.append(i)
-            plt.scatter(dist, i, label=filename)
+            # plt.scatter(dist, i, label=filename)
+            # plt.scatter(dist, i)
+            # plt.annotate(filename_note_mapping[filename.split('/')[1]], (dist, i))
             closest_note = ""
             closest_diff = 10000
             for note, freq in note_mappings.items():
@@ -196,7 +236,7 @@ for version, mapping in filename_hole_loc_mapping.items():
 
         # f, pxx_den = signal.periodogram(data, fs)
         # plt.semilogy(f, pxx_den)
-    # plt.scatter(dists, freqs, label=version)
+    plt.scatter(dists, freqs, label=version)
     params, conv = optimize.curve_fit(fit_func, dists, freqs)
     print(params)
 
@@ -205,57 +245,33 @@ for version, mapping in filename_hole_loc_mapping.items():
         fitted_y.append(fit_func(d, params[0], params[1]))
     plt.plot(dists, fitted_y, label=f"Fitted")
 
-    plt.xlabel('Distance of hole from opening [cm]')
-    plt.ylabel('Frequency [Hz]')
-    plt.title(f"Distance of hole vs Frequency {version}")
-    plt.figure()
+    # plt.xlabel('Distance of hole from opening [cm]')
+    # plt.ylabel('Frequency [Hz]')
+    # plt.title(f"Distance of hole vs Frequency {version}")
+    # plt.figure(figsize=(15,10))
 
-
+# i = 0
 # for note, freq in note_mappings.items():
-#     plt.hlines(y=freq, xmin=min(dists),  xmax=max(dists), label=note, color=np.random.rand(3,))
+#     # plt.hlines(y=freq, xmin=min(dists),  xmax=max(dists), label=note, color=np.random.rand(3,))
+#     color = colorsys.hsv_to_rgb( i / (len(note_mappings)*2), 1.0, 1.0 )
+#     plt.hlines(y=freq, xmin=min(dists),  xmax=max(dists), color=color)
+#     plt.annotate(note, (min(dists)-1, freq))
 
 #     # y = mx + b
 #     # x = (y-b)/m
 #     dist = (freq - params[1]) / params[0]
-    
+
 #     if note in "E4 D4# F4# G4# B3":
 #         print(f"Note {note} is a hole at {dist} cm")
 #     # plt.scatter(10, freq, label=note)
+#     i += 1
 
 
 plt.legend()
 plt.xlabel('Distance of hole from opening [cm]')
 plt.ylabel('Frequency [Hz]')
 plt.title("Distance of hole vs Frequency")
-#plt.xlim(0, max_freq_show)
+plt.xlim(min(dists)-1.5, max(dists)+1)
+# plt.xlim(0, max_freq_show)
 # plt.ylim(0, 5E7)
 plt.show()
-
-# plt.subplot(2, 2, 1)
-# plt.plot(abs_freqs,'r')
-# plt.xlabel('frequency [Hz]')
-# plt.xlim(0, max_freq_show)
-# # plt.show()
-
-# #%% welch
-
-# f, pxx = signal.welch(data, fs)
-# plt.subplot(2, 2, 2)
-# plt.semilogy(f, pxx)
-# plt.xlabel('frequency [Hz]')
-# plt.ylabel('PSD [V**2/Hz]')
-# plt.xlim(0, max_freq_show)
-# # plt.show()
-
-
-# # %%
-# plt.subplot(2, 2, 3)
-# f, pxx_den = signal.periodogram(data, fs)
-# plt.semilogy(f, pxx_den)
-# plt.xlabel('frequency [Hz]')
-# plt.ylabel('PSD [V**2/Hz]')
-# plt.xlim(0, max_freq_show)
-# plt.show()
-
-
-# %%
