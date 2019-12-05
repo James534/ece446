@@ -1,20 +1,6 @@
 import numpy as np
 from scipy.io import wavfile
 
-# from https://mypianonotes.com/my-heart-will-go-on/
-#   https://www.piano-keyboard-guide.com/my-heart-will-go-on-easy-piano-tutorial-titanic-theme-by-celine-dion/
-notes = [
-    # Every night in my dreams
-    "E", "E", "E", "E", "D#", "E",
-    "E", "D#", "E",     "F#", "G#", "F#",
-    "E", "E", "E", "E", "D#", "E",      "E", "B",
-
-    # Far across the distance
-    "E", "E", "E", "D#", "E",
-    "E", "D#", "E",     "F#", "G#", "F#",
-    "E", "E", "E", "E", "D#", "E",      "E", "B",
-]
-
 
 note_file_mapping = {
     "G#":   "V4/Hole_1",
@@ -66,9 +52,6 @@ for note in set(note_file_mapping.keys()):
     # wavfile.write("generated/" + note + ".wav", fs, norm_note_data)
 
 sampling_rate = 44100
-for note in set(notes):
-    cur_note = normalized_notes[note]
-
 #%%
 import mido
 
@@ -88,7 +71,7 @@ core_note_mapping = {
     10: "A#",
 }
 
-midi_name = "imperial"
+midi_name = "heart_will_go_on_filtered"
 
 mid = mido.MidiFile(f"midi/{midi_name}.mid")
 song = np.array([0])
